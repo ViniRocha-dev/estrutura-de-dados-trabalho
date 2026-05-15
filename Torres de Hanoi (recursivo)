@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+/*
+Caso base:
+    1 disco -> move direto de origem para destino
+Redução:
+    mover n-1 discos para auxiliar,
+    mover disco maior,
+    mover n-1 novamente
+*/
+
+void hanoi(int n, char origem, char auxiliar, char destino, long long *movimentos) {
+    if (n == 1) {
+        printf("Mover disco 1 de %c para %c\n", origem, destino);
+        (*movimentos)++;
+        return;
+    }
+
+    hanoi(n - 1, origem, destino, auxiliar, movimentos);
+
+    printf("Mover disco %d de %c para %c\n", n, origem, destino);
+    (*movimentos)++;
+
+    hanoi(n - 1, auxiliar, origem, destino, movimentos);
+}
+
+int main() {
+    int n;
+    long long movimentos = 0;
+
+    printf("Digite o numero de discos: ");
+    scanf("%d", &n);
+
+    hanoi(n, 'A', 'B', 'C', &movimentos);
+
+    printf("\nTotal de movimentos: %lld\n", movimentos);
+
+    return 0;
+}
