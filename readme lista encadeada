@@ -1,0 +1,52 @@
+# README.md
+
+# Trabalho Estruturas de Dados em C
+
+Projeto desenvolvido para a disciplina de Estruturas de Dados.
+
+## Objetivo
+
+Implementar operações utilizando listas encadeadas em linguagem C.
+
+## Funcionalidades
+
+### Lista Simplesmente Encadeada
+
+* Inserção em posição específica
+* Busca de valor
+* Inversão da lista
+* Divisão da lista em duas partes
+
+### Playlist Circular Duplamente Encadeada
+
+* Adicionar músicas
+* Navegar para próxima música
+* Navegar para música anterior
+* Exibir playlist
+* Contar músicas
+
+## Tecnologias utilizadas
+
+* Linguagem C
+* Biblioteca stdio.h
+* Biblioteca stdlib.h
+
+## Como executar
+
+Compile o programa:
+
+```bash
+gcc main.c -o programa
+```
+
+Execute:
+
+```bash
+./programa
+```
+
+## Observações
+
+* Foi utilizado malloc/free para gerenciamento de memória.
+* Não foram utilizados vetores auxiliares.
+* A playlist funciona de forma circular.
