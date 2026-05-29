@@ -1,0 +1,404 @@
+# main.c
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+/*
+    =========================
+    PARTE 1, 2, 3 e 4
+    Lista simplesmente encadeada
+    =========================
+*/
+
+typedef struct No {
+    int valor;
+    struct No *prox;
+} No;
+
+/* cria novo nó */
+No* criarNo(int valor) {
+    No *novo = (No*) malloc(sizeof(No));
+
+    if (novo == NULL) {
+        printf("Erro de memoria\n");
+        return NULL;
+    }
+
+    novo->valor = valor;
+    novo->prox = NULL;
+
+    return novo;
+}
+
+/* adiciona no final */
+void inserirFinal(No **head, int valor) {
+    No *novo = criarNo(valor);
+
+    if (*head == NULL) {
+        *head = novo;
+        return;
+    }
+
+    No *temp = *head;
+
+    while (temp->prox != NULL) {
+        temp = temp->prox;
+    }
+
+    temp->prox = novo;
+}
+
+/* exibir lista */
+void exibirLista(No *head) {
+    while (head != NULL) {
+        printf("%d -> ", head->valor);
+        head = head->prox;
+    }
+
+    printf("NULL\n");
+}
+
+/*
+    =========================
+    PARTE 1
+    Inserir em posição específica
+    =========================
+*/
+
+void inserirPosicao(No **head, int valor, int posicao) {
+
+    if (posicao < 0) {
+        printf("Posicao invalida\n");
+        return;
+    }
+
+    No *novo = criarNo(valor);
+
+    /* inserir no começo */
+    if (posicao == 0) {
+        novo->prox = *head;
+        *head = novo;
+        return;
+    }
+
+    No *temp = *head;
+    int i = 0;
+
+    while (temp != NULL && i < posicao - 1) {
+        temp = temp->prox;
+        i++;
+    }
+
+    if (temp == NULL) {
+        printf("Posicao invalida\n");
+        free(novo);
+        return;
+    }
+
+    novo->prox = temp->prox;
+    temp->prox = novo;
+}
+
+/*
+    =========================
+    PARTE 2
+    Buscar valor
+    =========================
+*/
+
+int buscarValor(No *head, int valor) {
+
+    int posicao = 0;
+
+    while (head != NULL) {
+
+        if (head->valor == valor) {
+            return posicao;
+        }
+
+        head = head->prox;
+        posicao++;
+    }
+
+    return -1;
+}
+
+/*
+    =========================
+    PARTE 3
+    Inverter lista
+    =========================
+*/
+
+void inverterLista(No **head) {
+
+    No *anterior = NULL;
+    No *atual = *head;
+    No *proximo = NULL;
+
+    while (atual != NULL) {
+
+        proximo = atual->prox;
+        atual->prox = anterior;
+
+        anterior = atual;
+        atual = proximo;
+    }
+
+    *head = anterior;
+}
+
+/*
+    =========================
+    PARTE 4
+    Dividir lista em duas
+    =========================
+*/
+
+void dividirLista(No *head, No **lista1, No **lista2) {
+
+    if (head == NULL) {
+        *lista1 = NULL;
+        *lista2 = NULL;
+        return;
+    }
+
+    No *lento = head;
+    No *rapido = head->prox;
+
+    while (rapido != NULL && rapido->prox != NULL) {
+        lento = lento->prox;
+        rapido = rapido->prox->prox;
+    }
+
+    *lista1 = head;
+    *lista2 = lento->prox;
+
+    lento->prox = NULL;
+}
+
+/* liberar memória */
+void liberarLista(No *head) {
+
+    No *temp;
+
+    while (head != NULL) {
+        temp = head;
+        head = head->prox;
+        free(temp);
+    }
+}
+
+/*
+    =========================
+    PARTE 5
+    Playlist circular duplamente encadeada
+    =========================
+*/
+
+typedef struct Musica {
+    char musica[100];
+    struct Musica *prox;
+    struct Musica *ant;
+} Musica;
+
+/* copiar string sem string.h */
+void copiarTexto(char destino[], char origem[]) {
+
+    int i = 0;
+
+    while (origem[i] != '\0') {
+        destino[i] = origem[i];
+        i++;
+    }
+
+    destino[i] = '\0';
+}
+
+/* adicionar música */
+void adicionarMusica(Musica **head, char *nome) {
+
+    Musica *novo = (Musica*) malloc(sizeof(Musica));
+
+    if (novo == NULL) {
+        printf("Erro de memoria\n");
+        return;
+    }
+
+    copiarTexto(novo->musica, nome);
+
+    /* primeira música */
+    if (*head == NULL) {
+
+        novo->prox = novo;
+        novo->ant = novo;
+
+        *head = novo;
+        return;
+    }
+
+    Musica *ultimo = (*head)->ant;
+
+    ultimo->prox = novo;
+
+    novo->ant = ultimo;
+    novo->prox = *head;
+
+    (*head)->ant = novo;
+}
+
+/* próxima música */
+void proximaMusica(Musica **atual) {
+
+    if (*atual != NULL) {
+        *atual = (*atual)->prox;
+    }
+}
+
+/* música anterior */
+void musicaAnterior(Musica **atual) {
+
+    if (*atual != NULL) {
+        *atual = (*atual)->ant;
+    }
+}
+
+/* exibir playlist */
+void exibirPlaylist(Musica *head) {
+
+    if (head == NULL) {
+        printf("Playlist vazia\n");
+        return;
+    }
+
+    Musica *temp = head;
+
+    do {
+        printf("[%s] <-> ", temp->musica);
+        temp = temp->prox;
+    } while (temp != head);
+
+    printf("(volta ao inicio)\n");
+}
+
+/* total de músicas */
+int totalMusicas(Musica *head) {
+
+    if (head == NULL) {
+        return 0;
+    }
+
+    int total = 0;
+    Musica *temp = head;
+
+    do {
+        total++;
+        temp = temp->prox;
+    } while (temp != head);
+
+    return total;
+}
+
+/* tocar playlist uma vez */
+void tocarPlaylist(Musica *head) {
+
+    if (head == NULL) {
+        return;
+    }
+
+    Musica *temp = head;
+
+    printf("\nTocando playlist:\n");
+
+    do {
+        printf("Tocando: %s\n", temp->musica);
+        temp = temp->prox;
+    } while (temp != head);
+
+    printf("Fim da playlist\n");
+}
+
+/* liberar playlist */
+void liberarPlaylist(Musica *head) {
+
+    if (head == NULL) {
+        return;
+    }
+
+    Musica *temp = head->prox;
+
+    while (temp != head) {
+
+        Musica *aux = temp;
+        temp = temp->prox;
+        free(aux);
+    }
+
+    free(head);
+}
+
+/*
+    =========================
+    MAIN
+    =========================
+*/
+
+int main() {
+
+    No *lista = NULL;
+
+    inserirFinal(&lista, 10);
+    inserirFinal(&lista, 20);
+    inserirFinal(&lista, 30);
+
+    printf("Lista original:\n");
+    exibirLista(lista);
+
+    printf("\nInserindo 99 na posicao 1:\n");
+    inserirPosicao(&lista, 99, 1);
+    exibirLista(lista);
+
+    printf("\nBuscando valor 20:\n");
+    printf("Posicao: %d\n", buscarValor(lista, 20));
+
+    printf("\nLista invertida:\n");
+    inverterLista(&lista);
+    exibirLista(lista);
+
+    No *lista1 = NULL;
+    No *lista2 = NULL;
+
+    dividirLista(lista, &lista1, &lista2);
+
+    printf("\nLista 1:\n");
+    exibirLista(lista1);
+
+    printf("\nLista 2:\n");
+    exibirLista(lista2);
+
+    /*
+        PLAYLIST
+    */
+
+    Musica *playlist = NULL;
+
+    adicionarMusica(&playlist, "Rock");
+    adicionarMusica(&playlist, "Jazz");
+    adicionarMusica(&playlist, "Pop");
+
+    printf("\nPlaylist:\n");
+    exibirPlaylist(playlist);
+
+    printf("\nTotal de musicas: %d\n", totalMusicas(playlist));
+
+    tocarPlaylist(playlist);
+
+    liberarLista(lista1);
+    liberarLista(lista2);
+
+    liberarPlaylist(playlist);
+
+    return 0;
+}
+```
